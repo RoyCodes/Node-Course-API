@@ -29,6 +29,29 @@ app.get('/todos', (req, res) => {
     });
 });
 
+// GET /todos/:id
+app.get('/todos/:id', (req, res) => {
+    var id = req.params.id;
+    // send back request in body
+    // res.send(req.params);
+
+    //validate id using isValid like in mongoose-queries.js
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        //if not valid, return 404 with no body
+        return res.status(404).send();
+    }
+    Todo.findById(id).then((todo) => {
+        if (!todo) {
+            // if no todo, return 404 with no body
+            return res.status(404).send();
+        }
+        //if todo, send back todo in body
+        res.send({todo});
+    }).catch((e) => {
+        //if error, send 400 with no body
+        res.status(400).send();
+    });
+});
 
 app.listen(3000, () => {
     console.log('Started on Port 3000');
