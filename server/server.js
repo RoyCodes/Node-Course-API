@@ -33,7 +33,9 @@ app.get('/todos', (req, res) => {
 
 // GET /todos/:id
 app.get('/todos/:id', (req, res) => {
+    //get the id
     var id = req.params.id;
+    
     // send back request in body
     // res.send(req.params);
 
@@ -51,6 +53,27 @@ app.get('/todos/:id', (req, res) => {
         res.send({todo});
     }).catch((e) => {
         //if error, send 400 with no body
+        res.status(400).send();
+    });
+});
+
+app.delete('/todos/:id', (req, res) => {
+    //get the id
+    var id = req.params.id;
+
+    //validate the id. If not, return 404
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).send();
+    }
+    //remove todo by id and send doc back
+    Todo.findByIdAndRemove(id).then((todo) => {
+        if (!todo) {
+            //If error send 400 no body
+            res.status(404).send();
+        }
+
+        res.send(todo);
+    }).catch((e) => {
         res.status(400).send();
     });
 });
